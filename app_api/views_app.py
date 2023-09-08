@@ -860,20 +860,28 @@ class AttachmentView(APIView):
         if attachment:
             attachment_name = attachment.name
             attachment_size = self.sizeFormat(attachment.size)
-            # 限制附件大小在50mb以内
-            if attachment.size > 52428800:
+            # 限制附件大小在500mb以内
+            if attachment.size > 524288000:
                 return Response({'code': False, 'data': _('文件大小超出限制')})
             # 限制附件为ZIP格式文件
-            if attachment_name.endswith('.zip'):
-                a = Attachment.objects.create(
+            # attachment_suffix_list = ['zip','rar','docx','doc','xls','xlsx','pdf','md','png','jpg','ppt','pptx','txt']
+            # if attachment_name.endswith('.zip'):
+            #     a = Attachment.objects.create(
+            #         file_name=attachment_name,
+            #         file_size=attachment_size,
+            #         file_path=attachment,
+            #         user=request.user
+            #     )
+            #     return Response({'code': 0, 'data': {'name': attachment_name, 'url': a.file_path.name}})
+            # else:
+            #     return Response({'code': 5, 'data': _('不支持的格式')})
+            a = Attachment.objects.create(
                     file_name=attachment_name,
                     file_size=attachment_size,
                     file_path=attachment,
                     user=request.user
                 )
-                return Response({'code': 0, 'data': {'name': attachment_name, 'url': a.file_path.name}})
-            else:
-                return Response({'code': 5, 'data': _('不支持的格式')})
+            return Response({'code': 0, 'data': {'name': attachment_name, 'url': a.file_path.name}})
         else:
             return Response({'code': 5, 'data': _('无效文件')})
 

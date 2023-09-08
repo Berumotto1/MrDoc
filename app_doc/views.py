@@ -2774,19 +2774,22 @@ def manage_attachment(request):
                     allow_attach_size = int(allow_attachment_size.value) * 1048576
                 except Exception as e:
                     # print(repr(e))
-                    allow_attach_size = 52428800
+                    # 500 MB
+                    allow_attach_size = 524288000
                 if attachment.size > allow_attach_size:
                     return JsonResponse({'status':False,'data':_('文件大小超出限制')})
 
                 # 限制附件格式
                 # 获取系统设置允许的附件格式，如果不存在，默认仅允许zip格式文件
                 try:
+                    # 在这里修改
                     attachment_suffix_list =  SysSetting.objects.get(types='doc',name='attachment_suffix')
                     attachment_suffix_list = attachment_suffix_list.value.split(',')
                     if attachment_suffix_list == ['']:
-                        attachment_suffix_list = ['zip']
+                        attachment_suffix_list = ['zip','rar','docx','doc','xls','xlsx','pdf','md','png','jpg','ppt','pptx','txt','py','c','cpp','java']
                 except ObjectDoesNotExist:
-                    attachment_suffix_list = ['zip']
+                    # 修改这里
+                    attachment_suffix_list = ['zip','rar','docx','doc','xls','xlsx','pdf','md','png','jpg','ppt','pptx','txt','py','c','cpp','java']
                 allow_attachment = False
                 for suffix in attachment_suffix_list:
                     if attachment_name.split('.')[-1].lower() in attachment_suffix_list:
